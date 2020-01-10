@@ -21,23 +21,28 @@ public:
             else{
                 sum -= 1;
             }
-            if(mapMax.count(sum) == 0){
+            if(mapMax.count(sum) == 0 && sum != 0){
                 mapMax.insert({sum,i});
             }
             else{
-                int len = i - mapMax[sum];
+                int len = 0;
+                if(sum == 0){
+                    len = i+1;
+                }
+                else{
+                    len = i - mapMax[sum];
+                }
                 if(len > max){
                     max = len;
                 }
             }
         }
         return max;
-    }
-    
+    }   
 };
 
 int main(){
     Solution s;
-    vector<int> n = {1,0,0,1};
+    vector<int> n = {0,1,1,1,0,0,1};
     cout << s.findMaxLength(n) << endl;
 }
