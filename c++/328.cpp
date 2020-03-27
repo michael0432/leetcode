@@ -10,16 +10,20 @@ struct ListNode {
  
 class Solution {
 public:
-    ListNode *end;
+    
     ListNode* oddEvenList(ListNode* head) {
-        ListNode *tmp = head->next;
-        
-        odd(head);
-        return head;
-    }
-    void odd(ListNode* head){
-        ListNode *tmp = head->next;
-        head->next = head->next->next;
-        odd(tmp);  
+        ListNode *start = head;
+        ListNode *second = head->next;
+        ListNode *end = start;
+        bool odd = true;
+        while(head->next && head->next->next){
+            ListNode * tmp = head->next;
+            head->next = head->next->next;
+            if(odd) end = head->next;
+            odd = !odd;
+            head = tmp;
+        }
+        end -> next = second;
+        return start;
     }
 };
