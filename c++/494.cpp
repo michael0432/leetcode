@@ -27,6 +27,26 @@ public:
     }
 };
 
+class Solution {
+public:
+    long long int total = 0;
+    int findTargetSumWays(vector<int>& nums, int S) {
+        recursive(nums,(long long)S,0);
+        return (int)total;
+    }
+    void recursive(vector<int>& nums, long long S, int idx){
+        if(idx >= nums.size()){
+            if(S == 0)
+                total++;
+            return;
+        }
+        recursive(nums, S - nums[idx], idx + 1);
+        recursive(nums, S + nums[idx], idx + 1);
+        return;
+    }
+};
+
+
 int main(){
     vector<int> nums = {0,0,0,0,0,0,0,0,1};
     int target = 1;
