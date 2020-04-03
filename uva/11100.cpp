@@ -26,8 +26,9 @@ vector<vector<int>> greedy(vector<int>& v){
 
 int main(){
     int n;
-    vector<int> v;
+    
     while(cin >> n && n != 0){
+        vector<int> v;
         for (int i = 0; i < n; i++){
             int x;
             cin >> x;
@@ -44,5 +45,6 @@ int main(){
             }
             cout << endl;
         }
+        cout << endl;
     }
 }

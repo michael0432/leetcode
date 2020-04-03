@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 
 using namespace std;
 
@@ -55,7 +56,7 @@ int main(){
         
         double ans = closestPair(p, 0, p.size() - 1);
         if(ans <= 10000){
-            cout << ans << endl;
+            printf("%.4lf\n", ans);
         }
         else{
             cout << "INFINITY" << endl;
