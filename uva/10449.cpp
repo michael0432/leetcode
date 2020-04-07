@@ -29,15 +29,14 @@ int ans(vector<node> map,int end) {
 			}
 		}
 	}
-	//cout << "test" << endl;
+	//找負環
 	for (int j = 0;j < map.size();j++) {
 		for (int k = 0;k < map[j].edges.size();k++) {
 			int des_dis = map[map[j].edges[k].des].dis;//RE
 			if ((map[j].dis + map[j].edges[k].weight) < des_dis) {
 				//cout << "des_dis: "<<des_dis << endl;
-				if (map[end].dis < 3) {
-					return -1;
-				}
+				//找到負環，j在負環上
+				//對j做bfs，找到所有在負環上的點，這些點都要output?
 			}
 		}
 	}
