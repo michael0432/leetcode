@@ -38,3 +38,25 @@ int main(){
         cout << endl;
     }
 }
+
+
+class Solution {
+public:
+    vector<vector<int>> total_set = {};
+    vector<vector<int>> subsets(vector<int>& nums) {
+        vector<int> v;
+        dfs(nums, v, 0);
+        return total_set;
+    }
+    void dfs(vector<int>& nums, vector<int>& now, int idx){
+        if(idx >= nums.size()){
+            total_set.push_back(now);
+            return;
+        }
+            
+        dfs(nums, now, idx+1);
+        now.push_back(nums[idx]);
+        dfs(nums, now, idx+1);
+        now.pop_back();
+    }
+};
