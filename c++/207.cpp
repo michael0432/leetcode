@@ -36,3 +36,34 @@ int main(){
     Solution s;
     cout << s.canFinish(n,edges) << endl;
 }
+
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
+        vector<vector<int>> graph(numCourses, vector<int>(numCourses));
+        vector<vector<bool>> visited(numCourses, vector<bool>(numCourses));
+        for (int i = 0; i < prerequisites.size(); i++){
+            graph[prerequisites[i][1]][prerequisites[i][1]] = 1;
+        }
+        vector<int> start_node;
+        for (int i = 0; i < graph.size(); i++){
+            bool b = true;
+            for (int j = 0; j < graph[i].size(); j++){
+                if(graph[i][j] != 0){
+                    b = false;
+                    break;
+                }
+            }
+            if(b){
+                start_node.push_back(i);
+                break;
+            }
+        }
+        if(start_node.size() == 0)
+            return false;
+
+        else{
+            for
+        }
+    }
+};
