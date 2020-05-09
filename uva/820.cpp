@@ -6,18 +6,21 @@ using namespace std;
 
 int maxFlow(vector<vector<int>>& graph, int s_n, int d_n, int nNum){
     int output = 0;
-    // residual network
+    // residual network n1->n2 : 5, n1->n2 : 3 (flow) n2->n1 : -3
     vector<vector<int>> flow(nNum+1, vector<int>(nNum+1, 0));
     // while(1)直到找不到argumenting path
     while(1){
-        //bfs
-        vector<int> bottleneck(nNum + 1, 0); // 存每個點的bottleneck
+        vector<int> bottleneck(nNum + 1, 0); // 存每個點的bottleneck，這個點目前有多少流量流進來
         bottleneck[s_n] = INT_MAX;
         queue<int> q;
         q.push(s_n);
         
         vector<int> previousNode(nNum+1, 0);　//存走過的路
-        while(!q.empty() && bottleneck[d_n] == 0){　// bfs走完或是走到終點（bottleneck[d_n]一開始是0，如果flow走到會變成不是0）
+        //bfs: one argumenting path
+        while(!q.empty() && bottleneck[d_n] == 0){　
+            // bfs走完或是走到終點（bottleneck[d_n]一開始是0，如果flow走到會變成不是0）
+            // q.empty() -> bfs done
+            // bottleneck[d_n] != 0 -> 走到終點
             int cur = q.front();
             q.pop();
             // 看每個node能不能走
@@ -33,6 +36,8 @@ int maxFlow(vector<vector<int>>& graph, int s_n, int d_n, int nNum){
                 }
             }
         }
+        // bfs end
+
         //走不到終點，表示沒有flow能到終點了，演算法結束
         if(bottleneck[d_n] == 0)
             break;

@@ -27,3 +27,32 @@ int main(){
     Solution s;
     cout << s.findDuplicate(nums) << endl;
 }
+
+
+class Solution {
+public:
+    int findDuplicate(vector<int>& nums) {
+
+        int low = 1, high = nums.size();
+        while(low < high){
+            
+            int mid = (low + high) / 2;
+            //cout << low << high << mid << endl;
+            int cnt = 0;
+            for (int i = 0; i < nums.size(); i++){
+                if(nums[i] <= mid && nums[i] >= low){
+                    cnt++;
+                }
+            }
+            
+            if(cnt <= mid-low+1){
+                low = mid + 1;
+            }
+            else{
+                high = mid;
+            }
+        }
+        return low;
+    }
+    
+};
