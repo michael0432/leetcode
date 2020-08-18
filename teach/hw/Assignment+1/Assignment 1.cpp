@@ -75,9 +75,7 @@ void testFillConstructor()
       //cout << length << endl;
       if( equal( vector1, vector2 ) )
          numErrors--;
-      cout << i << " " << number << " "  << numErrors << endl;
    }
-   printf("There are %d erros.\n", numErrors);
    cout << "There are " << numErrors << " errors.\n";
 }
 
@@ -100,7 +98,7 @@ void testCopyConstructor()
 
       vector vector3( vector1 );
       std::vector< int > vector4( vector2 );
-
+      //cout << vector3.capacity() << " " << vector4.capacity() << endl;
       if( equal( vector3, vector4 ) )
          numErrors--;
    }
@@ -130,7 +128,7 @@ void testAssignment1()
 
       vector3.assign( vector1 ); // vector3 = vector1
       vector4 = vector2;
-
+      
       if( equal( vector3, vector4 ) )
          numErrors--;
    }
@@ -188,9 +186,19 @@ void testResize1()
    for( unsigned int i = 0; i < number; i++ )
    {
       length = rand() % 200;
+      // if(i < 100){
+         
+      //    cout<<"test capacity: "<<vector1.capacity()<<" "<<vector2.capacity() << endl;
+      //    cout<<"test size: "<<vector1.size()<<" "<<vector2.size() << endl;
+      //    cout << "length: " << length << endl; 
+      // }
+      
       vector1.resize( length );
       vector2.resize( length );
-
+      // if(i < 100){
+      //    cout<<"test capacity: "<<vector1.capacity()<<" "<<vector2.capacity() << endl;
+      //    cout<<"test size: "<<vector1.size()<<" "<<vector2.size() << endl;
+      // }
       if( equal( vector1, vector2 ) )
          numErrors--;
    }
@@ -219,9 +227,10 @@ void testResize2()
          if( newAddress != oldAddress )
             numErrors--;
       }
-      else
+      else{
          if( newAddress == oldAddress )
             numErrors--;
+      }
    }
 
    // newAddress == oldAddress if and only if
@@ -239,11 +248,17 @@ void testResize2()
 bool equal( vector &left, std::vector< int > &right )
 {
    
-   if( left.capacity() != right.capacity() )
+   if( left.capacity() != right.capacity() ){
+      //cout << left.capacity() << right.capacity() << endl;
       return false;
+   }
+      
 
-   if( left.size() != right.size() )
+   if( left.size() != right.size() ){
+      //cout << left.size() << right.size() << endl;
       return false;
+   }
+      
    
    for( size_t i = 0; i < right.size(); ++i ){
       if( left.element( i ) != right[ i ] ){
