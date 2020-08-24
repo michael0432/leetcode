@@ -128,7 +128,7 @@ HugeInteger HugeInteger::subtract( HugeInteger &op2 )
    vector::iterator it2 = op2.integer.begin();
    int borrow = 0;
    
-   for(; it1 != difference.integer.end(); it1++, it2++){
+   for(; it1 != difference.integer.end(); it1++){
       int sub;
       if(it2 == op2.integer.end()){
          sub = 0;
@@ -144,6 +144,9 @@ HugeInteger HugeInteger::subtract( HugeInteger &op2 )
       else{
          *it1 = tmp;
          borrow = 0;
+      }
+      if(it2 != op2.integer.end()){
+         it2++;
       }
    }
    while(difference.integer.back() == 0 && !difference.isZero()){
