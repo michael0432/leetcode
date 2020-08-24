@@ -1,5 +1,7 @@
 #include "Vector.h" // include definition of class vector 
-
+#include <cstddef>
+#include <iostream>
+#include <memory.h>
 // empty container constructor (default constructor)
 // Constructs an empty container, with no elements.
 vector::vector()
@@ -13,9 +15,14 @@ vector::vector()
 // Constructs a container with "count" elements.
 // Each element is initialized as 0.
 vector::vector( const size_type count )
-   : 
+   : myFirst(),
+     myLast(),
+     myEnd()
 {
-
+   myFirst = new value_type[count]();
+   memset(myFirst, 0, 5 * sizeof(value_type));
+   myLast = myFirst + count;
+   myEnd = myFirst + count;
 }
 
 // copy constructor
@@ -26,7 +33,14 @@ vector::vector( const vector &right )
      myLast(),
      myEnd()
 {
-
+   int c = right.myEnd - right.myFirst;
+   int s = right.myLast - right.myFirst;
+   myFirst = new value_type[c]();
+   for(int i=0; i<c; i++){
+      myFirst[i] = right.myFirst[i];
+   }
+   myLast = myFirst + s;
+   myEnd = myFirst + s;
 }
 
 // Vector destructor
@@ -59,7 +73,22 @@ vector& vector::assign( const vector &right )
 {
    if( this != &right ) // avoid self-assignment
    {
-
+      size_type newSize = right.myLast - right.myFirst;
+      //resize(newSize);
+      if(newSize > capacity()){
+         myFirst = new value_type[newSize];
+         for(int i=0; i<newSize; i++){
+            myFirst[i] = right.myFirst[i];
+         }
+         myLast = myFirst + newSize;
+         myEnd = myLast;
+      }
+      else{
+         for(int i=0; i<newSize; i++){
+            myFirst[i] = right.myFirst[i];
+         }
+         myLast = myFirst + newSize;
+      }
    }
 
    return *this; // enables x = y = z, for example
@@ -76,7 +105,35 @@ vector& vector::assign( const vector &right )
 // an automatic reallocation of the allocated storage space takes place.
 void vector::resize( const size_type newSize )
 {
+   size_type s = size();
+   if(newSize < s){
+      myLast = myFirst + newSize;
+   }
+   else if(newSize > s){
+      if(newSize > capacity()){
 
+         size_type now_c = capacity();
+         int new_c = now_c;
+         new_c = newSize;
+         if(s * 2 < newSize) new_c = newSize;
+         else new_c = s * 2;
+         pointer newFirst;
+         newFirst = new value_type[new_c]();
+         for(int i=0; i<s; i++){
+            newFirst[i] = myFirst[i];
+         }
+         myFirst = newFirst;
+         myLast = myFirst + newSize;
+         myEnd = myFirst + new_c;
+      }
+      else{
+         for(int i=s; i<newSize; i++){
+            myFirst[i] = 0;
+         }
+      }
+      myLast = myFirst + newSize;
+      //myEnd = myFirst + newSize;
+   }
 }
 
 // Removes the last element in the vector,

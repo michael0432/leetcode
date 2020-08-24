@@ -1,5 +1,7 @@
 // Member-function definitions for class HugeInteger
 #include <iostream>
+#include <cstddef>
+#include <memory.h>
 using namespace std;
 #include "HugeInteger.h" // include definition of class HugeInteger
 
@@ -40,13 +42,38 @@ const HugeInteger &HugeInteger::assign( const HugeInteger &right )
 // function that tests if two HugeIntegers are equal
 bool HugeInteger::equal( const HugeInteger &right ) const
 {
-
+   if(right.integer.size() != integer.size()){
+      return false;
+   }
+   else{
+      for(int i=0; i<integer.size(); i++){
+         if(*right.integer.begin()+i != *integer.begin()+i){
+            return false;
+         }
+      }
+   }
+   return true;
 } // end function equal
 
 // function that tests if one HugeInteger is less than another
 bool HugeInteger::less( const HugeInteger &right ) const
 {
-
+   if(equal(right)) return false;
+   if(integer.size() > right.integer.size()){
+      return false;
+   }
+   else if(integer.size() < right.integer.size()){
+      return true;
+   }
+   else{
+      for(int i=0; i<integer.size(); i++){
+         int v1 = *right.integer.begin()+i;
+         int v2 = *integer.begin()+i;
+         if(v1 < v2) return true;
+         else if(v2 > v1) return false;
+      }
+   }
+   return false;
 } // end function less
 
 // function that tests if one HugeInteger is less than or equal to another
@@ -120,8 +147,31 @@ HugeInteger HugeInteger::divide( HugeInteger &op2 )
    HugeInteger zero;
    if( less( op2 ) )
       return zero;
-
-
+   HugeInteger tmp(op2);
+   int myDigit = integer.size();
+   int otherDigit = op2.integer.size();
+   int stepDigit = myDigit-otherDigit;
+   HugeInteger quotient(stepDigit+1);
+   while(stepDigit > 0){
+      HugeInteger step(stepDigit);
+      HugeInteger thisStep;
+      vector v;
+      for(int i=0; i<stepDigit; i++){
+         if(i == 0)
+            v.push_back(1);
+         else
+            v.push_back(0);
+      }
+      step.convert(v);
+      thisStep = step.multiply(tmp);
+      if(thisStep.lessEqual(*this)){
+         *this = this->subtract(thisStep);
+         quotient = quotient.add(step);
+      }
+      else{
+         stepDigit -= 1;
+      }
+   }
    return quotient;
 } // end function divide
 
