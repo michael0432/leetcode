@@ -46,13 +46,14 @@ bool HugeInteger::equal( const HugeInteger &right ) const
       return false;
    }
    else{
-      for(int i=0; i<integer.size(); i++){
-         if(*right.integer.begin()+i != *integer.begin()+i){
-            return false;
-         }
+      for(int i=integer.size()-1; i>=0; i--){
+         int v1 = *(integer.begin()+i);
+         int v2 = *(right.integer.begin()+i);
+         if(v1 != v2) return false;
       }
    }
    return true;
+   
 } // end function equal
 
 // function that tests if one HugeInteger is less than another
@@ -66,11 +67,11 @@ bool HugeInteger::less( const HugeInteger &right ) const
       return true;
    }
    else{
-      for(int i=0; i<integer.size(); i++){
-         int v1 = *right.integer.begin()+i;
-         int v2 = *integer.begin()+i;
+      for(int i=integer.size()-1; i>=0; i--){
+         int v1 = *(integer.begin()+i);
+         int v2 = *(right.integer.begin()+i);
          if(v1 < v2) return true;
-         else if(v2 > v1) return false;
+         else if(v1 > v2) return false;
       }
    }
    return false;
@@ -120,10 +121,34 @@ HugeInteger HugeInteger::subtract( HugeInteger &op2 )
 
    if( equal( op2 ) )
       return zero;
-
+   
    HugeInteger difference( *this );
 
-
+   vector::iterator it1 = difference.integer.begin();
+   vector::iterator it2 = op2.integer.begin();
+   int borrow = 0;
+   
+   for(; it1 != difference.integer.end(); it1++, it2++){
+      int sub;
+      if(it2 == op2.integer.end()){
+         sub = 0;
+      }
+      else{
+         sub = *it2;
+      }
+      int tmp = *it1-sub-borrow;
+      if(tmp < 0){
+         *it1 = tmp + 10;
+         borrow = 1;
+      }
+      else{
+         *it1 = tmp;
+         borrow = 0;
+      }
+   }
+   while(difference.integer.back() == 0 && !difference.isZero()){
+      difference.integer.pop_back();
+   }
    return difference;
 } // end function subtract
 
@@ -131,13 +156,57 @@ HugeInteger HugeInteger::subtract( HugeInteger &op2 )
 HugeInteger HugeInteger::multiply( HugeInteger &op2 )
 {
    HugeInteger zero;
+   
    if( isZero() || op2.isZero() )
       return zero;
 
    unsigned int productSize = integer.size() + op2.integer.size();
    HugeInteger product( productSize );
    
+   int cnt = 0;
+   vector::iterator it1 = this->integer.begin();
+   vector::iterator it2 = op2.integer.begin();
+   vector::iterator it3 = product.integer.begin();
 
+   int shift1 = 0, shift2 = 0;
+   
+   for(; it2 != op2.integer.end(); it2++, shift2++){
+      int carry = 0, shift1 = 0;
+      int place;
+      for(it1 = this->integer.begin(); it1 != this->integer.end(); it1++, shift1++){
+         place = shift1 + shift2;
+         int p = (*it1) * (*it2) + carry;
+         if(p >= 10){
+            it3 = product.integer.begin() + place;
+            *it3 += p % 10;
+            carry = p / 10;
+         }
+         else{
+            it3 = product.integer.begin() + place;
+            *it3 += p;
+            carry = 0;
+         }
+      }
+      if(carry != 0){
+         it3 = product.integer.begin() + place + 1;
+         *it3 += carry;
+      }
+      int c2 = 0;
+      for(it3 = product.integer.begin(); it3 != product.integer.end(); it3++){
+         int num = (*it3) + c2;
+         if(num >= 10){
+            c2 = num / 10;
+            *it3 = num % 10;
+         }
+         else{
+            *it3 = num;
+            c2 = 0;
+         }
+      }
+   }
+   while(product.integer.back() == 0 && !product.isZero()){
+      product.integer.pop_back();
+   }
    return product;
 } // end function multiply
 
@@ -147,30 +216,43 @@ HugeInteger HugeInteger::divide( HugeInteger &op2 )
    HugeInteger zero;
    if( less( op2 ) )
       return zero;
+   HugeInteger my(*this);
    HugeInteger tmp(op2);
    int myDigit = integer.size();
    int otherDigit = op2.integer.size();
-   int stepDigit = myDigit-otherDigit;
-   HugeInteger quotient(stepDigit+1);
+   int stepDigit = myDigit-otherDigit+1;
+   HugeInteger quotient(this->integer.size()), step(stepDigit);
+   vector v;
+   for(int i=0; i<stepDigit; i++){
+      if(i == 0)
+         v.push_back(1);
+      else
+         v.push_back(0);
+   }
+   step.convert(v);
    while(stepDigit > 0){
-      HugeInteger step(stepDigit);
-      HugeInteger thisStep;
-      vector v;
-      for(int i=0; i<stepDigit; i++){
-         if(i == 0)
-            v.push_back(1);
-         else
-            v.push_back(0);
-      }
-      step.convert(v);
-      thisStep = step.multiply(tmp);
-      if(thisStep.lessEqual(*this)){
-         *this = this->subtract(thisStep);
-         quotient = quotient.add(step);
+      //HugeInteger step(stepDigit);
+      HugeInteger thisStep = step.multiply(tmp);
+      if(thisStep.lessEqual(my)){
+         HugeInteger tmp_my = my.subtract(thisStep);
+         HugeInteger tmp_quotient = quotient.add(step);
+         for(int i=0; i<my.integer.size(); i++){
+            *(my.integer.begin()+i) = *(tmp_my.integer.begin()+i);
+         }
+         for(int i=0; i<quotient.integer.size(); i++){
+            *(quotient.integer.begin()+i) = *(tmp_quotient.integer.begin()+i);
+         }
+         while(my.integer.back() == 0 && !my.isZero()){
+            my.integer.pop_back();
+         }
       }
       else{
          stepDigit -= 1;
+         step.divideByTen();
       }
+   }
+   while(quotient.integer.back() == 0 && !quotient.isZero()){
+      quotient.integer.pop_back();
    }
    return quotient;
 } // end function divide

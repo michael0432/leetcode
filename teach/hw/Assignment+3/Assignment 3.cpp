@@ -20,7 +20,7 @@ int main()
 
    for( int i = 0; i < numTestCases; i++ )
       print( cout, n1[ i ], n2[ i ] );
-
+   
    ofstream outFile( "Result.txt", ios::out );
 
    // exit program if ofstream could not open file
@@ -76,24 +76,20 @@ void print( ostream &outFile, HugeInteger n1, HugeInteger n2 )
 {
    n1.output( outFile );
    n2.output( outFile );
-
    n1.add( n2 ).output( outFile );         // outputs n1 + n2
-
    if( n1.less( n2 ) )
    {
       outFile << '-';
+      
       n2.subtract( n1 ).output( outFile ); // outputs n2 - n1
    }
    else
       n1.subtract( n2 ).output( outFile ); // outputs n1 - n2
-
    n1.multiply( n2 ).output( outFile );    // outputs n1 * n2
-
    if( n2.isZero() )
       outFile << "DivideByZero!\n";
    else
       n1.divide( n2 ).output( outFile );   // outputs n1 / n2
-
    if( n2.isZero() )
       outFile << "DivideByZero!\n";
    else
