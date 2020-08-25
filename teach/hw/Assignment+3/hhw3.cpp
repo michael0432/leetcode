@@ -136,7 +136,7 @@ HugeInteger HugeInteger::subtract( HugeInteger &op2 )
       else{
          sub = *it2;
       }
-      int tmp = *it1-sub-borrow;
+      int tmp = (*it1)-sub-borrow;
       if(tmp < 0){
          *it1 = tmp + 10;
          borrow = 1;
@@ -165,18 +165,19 @@ HugeInteger HugeInteger::multiply( HugeInteger &op2 )
 
    unsigned int productSize = integer.size() + op2.integer.size();
    HugeInteger product( productSize );
-   
+   HugeInteger my(*this);
+   HugeInteger other(op2);
    int cnt = 0;
-   vector::iterator it1 = this->integer.begin();
-   vector::iterator it2 = op2.integer.begin();
+   vector::iterator it1 = my.integer.begin();
+   vector::iterator it2 = other.integer.begin();
    vector::iterator it3 = product.integer.begin();
 
    int shift1 = 0, shift2 = 0;
    
-   for(; it2 != op2.integer.end(); it2++, shift2++){
+   for(; it2 != other.integer.end(); it2++, shift2++){
       int carry = 0, shift1 = 0;
       int place;
-      for(it1 = this->integer.begin(); it1 != this->integer.end(); it1++, shift1++){
+      for(it1 = my.integer.begin(); it1 != my.integer.end(); it1++, shift1++){
          place = shift1 + shift2;
          int p = (*it1) * (*it2) + carry;
          if(p >= 10){
@@ -233,9 +234,9 @@ HugeInteger HugeInteger::divide( HugeInteger &op2 )
          v.push_back(0);
    }
    step.convert(v);
-   while(stepDigit > 0){
+   while(stepDigit > 0 && !my.isZero()){
       //HugeInteger step(stepDigit);
-      HugeInteger thisStep = step.multiply(tmp);
+      HugeInteger thisStep = step.multiply(op2);
       if(thisStep.lessEqual(my)){
          HugeInteger tmp_my = my.subtract(thisStep);
          HugeInteger tmp_quotient = quotient.add(step);
