@@ -22,6 +22,7 @@ const unsigned int number = 1000;
 
 int main()
 {
+   // cout << "Start Output:" << endl;
    for( unsigned int seed = 1; seed <= 5; seed++ )
    {
       srand( seed );
